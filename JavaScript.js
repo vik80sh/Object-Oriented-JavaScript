@@ -210,3 +210,83 @@ ob.defaultLocation={x:3,y:20}
 
 
 
+// Excericse StopWatch
+
+
+function Stopwatch(){
+    let startTime,endTime,running,duration=0;
+
+    this.start=function(){
+        if(running)
+            throw new Error("Stopwatch is running");
+        running=true;
+        startTime = new Date();
+    }
+    this.stop=function(){
+        if(running){
+            endTime=new Date();
+            running=false
+            duration =duration +  (endTime.getTime() - startTime.getTime())/1000;
+        }
+        else
+            throw new Error("Stopwatch is not running")
+    }
+    this.reset=function(){
+        ruuning=false;
+        startTime=null;
+        endTime=null
+        duration=0;
+    }
+    Object.defineProperty(this,'duration',{
+        get:function(){
+            return duration;
+        }
+    })
+}
+
+
+/*
+    whenever we create a Object it inheritated from a parent object
+    which is most upper object(root object) in js
+    which means when you create an object you get prototype of that
+    Object which is same for all
+
+*/
+
+let x ={};
+let y ={}
+console.log("prototype ", x.__proto__  === y.__proto__)
+let objectBase = Object.getPrototypeOf(x)
+
+console.log(" objectBase objectBase ",objectBase)
+
+let objc = x.toString()
+/*
+    1st if toString is available in x object it will use it
+    otherwise it will check in prototype of object
+    
+    
+    prototype is just a reglar object, Every Obejct has prototype 
+    expect for root object
+*/
+
+let myArray=[];
+
+/*
+if you see it has different prototype and it's prototype has also
+a prototype witch us same as obejct (x or y line 256,257)
+
+means 
+
+myArray ----Inherits---->ArrayObject-----
+ArrayObject-----Inherits-----> Root Object
+
+
+line number 132 , it is Circle constracter
+let xyz = new Circle(10)
+
+means xyz ----Inherits---->Circle constructer with all properties-----
+Circle -----Inherits-----> Root Object
+*/
+
+
