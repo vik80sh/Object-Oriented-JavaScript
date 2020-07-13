@@ -289,4 +289,190 @@ means xyz ----Inherits---->Circle constructer with all properties-----
 Circle -----Inherits-----> Root Object
 */
 
+let person = {name:'Vikash'}
 
+console.log(Object.keys(person)) // ["name"]
+
+/*
+    but if i do console.log(person.toString)
+
+    i can't see method when i console keys 
+    means i can't see properties of person which is inherited
+    means from __proto__ properties
+
+    how i can see all properies of __proto__ 
+
+*/
+
+let objectBasex  = Object.getPrototypeOf(person)
+
+console.log(" objectBaseobjectBase ",objectBasex)
+
+/*
+    if you want to decsription about any properties
+    have to use---> Object.getOwnPropertyDescriptor
+
+*/
+let descriptor = Object.getOwnPropertyDescriptor(objectBasex,'toString')
+console.log(" descriptor descriptor  ",descriptor)
+/*
+    in toString properties i got
+    1.  configurable:true   "Means can delete this member"
+    2.  enumetrable:false    "means not visiable from outer object line 294"
+    3.  writabke:true     "means we can override"
+
+    1. configurable : 
+    2.   
+*/
+
+ 
+Object.defineProperty(person,'name',{
+    writable:false,
+    enumerable:false,
+    configurable:false
+})
+/*
+    writable:false : now in person object name is not editable
+    enumerable:false : and we can't see name properties in Object.key of persons
+    configurable:false : we can't delete name properties
+*/
+
+person.name = "John"  
+console.log(person.name) // Vikash : not editable
+delete person.name // not delete
+
+
+function CircleProtoType(r){
+    this.radius = r;
+}
+CircleProtoType.prototype.draw= function(){
+    console.log("-----protiotype-----")
+}
+
+const c1 = new CircleProtoType(1);
+const c2 = new CircleProtoType(2);
+
+for(key in c1)
+    console.log("c1  ",key)
+for(key in c2)
+    console.log("c2  ",key)
+/*
+    For in loop return all members (instance + Prototype)
+    we will get 
+    JavaScript.js:356
+        c1   radius
+        c1   draw
+
+JavaScript.js:358 
+        c2   radius
+        c2   draw
+*/
+
+console.log(Object.keys(c1)) // ["radius"]
+/*
+    Object.keys will return only instance member
+    intance is ownProperty
+
+*/
+ 
+/*
+    prototype inheritance
+
+*/
+function Shape(color){
+    this.color=color
+
+}
+Shape.prototype.duplicate = function(){
+    console.log(" --Shape prototype-");
+}
+
+function Sqaure(s){
+    this.side = s;
+}
+
+/*
+Sqaure.prototype = Object.create(Object.prototype)
+if obejct not inheriting anyone, every object inherits Object prototype
+(root object)
+*/
+
+Sqaure.prototype = Object.create(Shape.prototype)
+
+/*
+    Square object inherit Shape Object
+*/
+
+/*
+    every object protype has constructor function 
+
+    like 
+    new Sqaure.prototype.constructor(1)
+    it retutns Sqaure{side:1}
+    
+    sort form
+    new Sqaure(1)
+    it retutns Sqaure{side:1}
+
+    but in this case
+    Sqaure.prototype = Object.create(Shape.prototype)
+    if i do new Sqaure.prototype.constructor(1)
+        will get nothing
+    new Sqaure.prototype.prototype.constructor(1)
+    i will get 
+    Shape{}
+    becasue Sqaure has protoype of Shape that is why it is returning
+    Shape constructor
+
+    sh whenever we have to set prototype we should reset the 
+    constructor properype again
+    Sqaure.prototype.constructor = Square
+*/
+Sqaure.prototype.constructor = Square;
+
+/*
+    Square object is inherited Shape object but can see color property of
+    Shape object visiable under Square object
+    
+    it is comes under 
+    windos object
+
+    let c = new Square(1,'red');
+    console.log(c) // Square{side}
+
+    console.log(window.color)   // red
+
+    how to fix this problem
+
+    so we have to call Shape Object under Square Obejct
+    
+function Sqaure(s,color){
+    shape.call(color)  // this is call super constructor
+    this.side = s;
+}
+
+now Square has 2 properties  side and color
+*/
+function Xyz(){
+    this.x =10;
+}
+
+/*
+so every time if i have to inherit other object then 
+we have to do
+Xyz.prototype = Object.create(Shape.prototype)
+Xyz.prototype.constructor = Xyz;
+
+so we will create a object which will help you that deal with inheritance
+*/
+
+
+function extend(Child,Parent){
+    Child.prototype = Object.create(Parent.prototype);
+    Child.prototype.constructor = Child
+}
+
+/*
+    extend function is called intermediate function inheritance
+
+*/
